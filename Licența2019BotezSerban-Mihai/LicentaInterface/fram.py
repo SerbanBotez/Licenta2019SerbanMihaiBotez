@@ -1,6 +1,11 @@
 import wx
 import sys
+import os
 import LicentaBackend.haardetection
+import LicentaBackend.createBg
+import LicentaBackend.annotation
+import LicentaBackend.vect
+
 
 panels = {}
 displayed_panel = ''
@@ -26,7 +31,7 @@ class MainFrame(wx.Frame):
         train_haar = TrainHaarClPanel(self)
         output_panel = OutputPanel(self)
         create_samples = CreateSamplesPanel(self)
-        helpp = HelpPanel(self)
+        crop_panel = CropPanel(self)
 
         #menu.SetBackgroundColour('blue')
         recognition.SetBackgroundColour('red')
@@ -37,6 +42,7 @@ class MainFrame(wx.Frame):
         panels['train_haar'] = train_haar
         panels['create_samples'] = create_samples
         panels['output_panel'] = output_panel
+        panels['crop_panel'] = crop_panel
 
         displayed_panel = 'detection'
 
@@ -49,7 +55,7 @@ class MainFrame(wx.Frame):
         frame_box.Add(train_haar, 6, wx.EXPAND)
         frame_box.Add(output_panel, 6, wx.EXPAND)
         frame_box.Add(create_samples, 6, wx.EXPAND)
-        frame_box.Add(helpp, 6, wx.EXPAND)
+        frame_box.Add(crop_panel, 6, wx.EXPAND)
 
         recognition.Hide()
         full_detection.Hide()
@@ -57,7 +63,7 @@ class MainFrame(wx.Frame):
         train_haar.Hide()
         output_panel.Hide()
         create_samples.Hide()
-        helpp.Hide()
+        crop_panel.Hide()
 
 # self.SetAutoLayout(True)
         self.SetSizer(frame_box)
@@ -76,7 +82,7 @@ class MenuPanel(wx.Panel):
         button5 = wx.Button(self, label='Train Haar Cl', size=(80, 50))
         button6 = wx.Button(self, label='Output', size=(80, 50))
         button7 = wx.Button(self, label='Make Samples', size=(80, 50))
-        button8 = wx.Button(self, label='Help', size=(80, 50))
+        button8 = wx.Button(self, label='CropImages', size=(80, 50))
 
         button1.Bind(wx.EVT_BUTTON, self.click1)
         button2.Bind(wx.EVT_BUTTON, self.click2)
@@ -84,6 +90,7 @@ class MenuPanel(wx.Panel):
         button5.Bind(wx.EVT_BUTTON, self.click5)
         button6.Bind(wx.EVT_BUTTON, self.click6)
         button7.Bind(wx.EVT_BUTTON, self.click7)
+        button8.Bind(wx.EVT_BUTTON, self.click8)
 
         menu.Add(button1, 0)
         menu.Add(button2, 0)
@@ -140,6 +147,15 @@ class MenuPanel(wx.Panel):
         panels['create_samples'].GetParent().Layout()
         displayed_panel = 'create_samples'
 
+    def click8(self, event):
+        print('a fost apasat butonul 8')
+
+        global displayed_panel
+        panels[displayed_panel].Hide()
+        panels['crop_panel'].Show()
+        panels['crop_panel'].GetParent().Layout()
+        displayed_panel = 'crop_panel'
+
 
 class BoxMenu(wx.BoxSizer):
     def __init__(self, orient):
@@ -153,19 +169,19 @@ class DetectionPanel(wx.Panel):
         mainbox = wx.BoxSizer(wx.VERTICAL)
 
         data_box = BoxMenu(wx.HORIZONTAL)
-        data_button = wx.Button(self, wx.ALIGN_LEFT, label='data', size=(70, 30))
+        data_button = wx.Button(self, wx.ALIGN_LEFT, label='Output folder', size=(90, 30))
         data_button.Bind(wx.EVT_BUTTON, self.dataclick)
         self.data_err = wx.StaticText(self, label='Select/Insert the cascade file path')
         self.data_err.SetForegroundColour((255, 0, 0))
 
         vec_box = BoxMenu(wx.HORIZONTAL)
-        vec_button = wx.Button(self, wx.ALIGN_LEFT, label='vector', size=(70, 30))
+        vec_button = wx.Button(self, wx.ALIGN_LEFT, label='Vector file', size=(90, 30))
         vec_button.Bind(wx.EVT_BUTTON, self.vecclick)
         self.vec_err = wx.StaticText(self, label='Select/Insert the vector file path')
         self.vec_err.SetForegroundColour((255, 0, 0))
 
         background_box = BoxMenu(wx.HORIZONTAL)
-        background_button = wx.Button(self, wx.ALIGN_LEFT, label='background', size=(70, 30))
+        background_button = wx.Button(self, wx.ALIGN_LEFT, label='Negative paths', size=(90, 30))
         background_button.Bind(wx.EVT_BUTTON, self.bgclick)
         self.bg_err = wx.StaticText(self, label='Select/Insert a background file path')
         self.bg_err.SetForegroundColour((255, 0, 0))
@@ -186,13 +202,13 @@ class DetectionPanel(wx.Panel):
         self.stage_err.SetForegroundColour((255, 0, 0))
 
         width_box = BoxMenu(wx.HORIZONTAL)
-        width_text = wx.StaticText(self, label='Width number : ')
-        self.width_err = wx.StaticText(self, label='Insert the width of the image')
+        width_text = wx.StaticText(self, label='Minimum hit rate : ')
+        self.width_err = wx.StaticText(self, label='Insert the min hit rate of the classifier')
         self.width_err.SetForegroundColour((255, 0, 0))
 
         height_box = BoxMenu(wx.HORIZONTAL)
-        height_text = wx.StaticText(self, label='Heigth number : ')
-        self.heigth_err = wx.StaticText(self, label='Insert the heigth of the image')
+        height_text = wx.StaticText(self, label='False alarm ratio : ')
+        self.heigth_err = wx.StaticText(self, label='Insert the max false alarm ratio of the classifier')
         self.heigth_err.SetForegroundColour((255, 0, 0))
 
         self.data_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
@@ -219,7 +235,7 @@ class DetectionPanel(wx.Panel):
         background_box.Add(self.bg_err, 0)
         self.bg_err.Hide()
 
-        pos_box.Add(pos_text, 0, wx.RIGHT, 12)
+        pos_box.Add(pos_text, 0, wx.RIGHT, 11)
         pos_box.Add(self.pos, 0)
         pos_box.Add(self.pos_err, 0)
         self.pos_err.Hide()
@@ -234,12 +250,12 @@ class DetectionPanel(wx.Panel):
         stage_box.Add(self.stage_err, 0)
         self.stage_err.Hide()
 
-        width_box.Add(width_text, 0, wx.RIGHT, 77)
+        width_box.Add(width_text, 0, wx.RIGHT, 60)
         width_box.Add(self.width, 0)
         width_box.Add(self.width_err, 0)
         self.width_err.Hide()
 
-        height_box.Add(height_text, 0, wx.RIGHT, 72)
+        height_box.Add(height_text, 0, wx.RIGHT, 66)
         height_box.Add(self.heigth, 0)
         height_box.Add(self.heigth_err, 0)
         self.heigth_err.Hide()
@@ -358,10 +374,10 @@ class DetectionPanel(wx.Panel):
         panels['output_panel'].GetParent().Layout()
         displayed_panel = 'output_panel'
 
-        LicentaBackend.haardetection.detect(r'C:\Users\Serban\Desktop\LicentaResources\data',
+        LicentaBackend.haardetection.detect(r'C:\Users\Serban\Desktop\LicentaResources\output',
                                             r'C:\Users\Serban\Desktop\LicentaResources\vecf.vec',
-                                            r'C:\Users\Serban\Desktop\LicentaResources\bg.txt',
-                                            '6', '100', '15', '24', '24',
+                                            r'C:\Users\Serban\Desktop\LicentaResources\negative.txt',
+                                            '6', '100', '15', '0.999', '0.5',
                                             printfct=panels['output_panel'].printline)
 
 
@@ -386,7 +402,7 @@ class TrainHaarClPanel(wx.Panel):
         super().__init__(parent)
 
 
-# class taken from
+# class RedirectText taken from
 # http://www.blog.pythonlibrary.org/2009/01/01/wxpython-redirecting-stdout-stderr/
 class RedirectText(object):
     def __init__(self, text):
@@ -422,154 +438,349 @@ class CreateSamplesPanel(wx.Panel):
         mainbox = wx.BoxSizer(wx.VERTICAL)
 
         image_box = BoxMenu(wx.HORIZONTAL)
-        image_button = wx.Button(self, wx.ALIGN_LEFT, label='image', size=(70, 30))
+        image_button = wx.Button(self, wx.ALIGN_LEFT, label='Negative Images', size=(100, 30))
         image_button.Bind(wx.EVT_BUTTON, self.imclick)
-        self.image_err = wx.StaticText(self, label='Select/Insert a image path')
+        self.image_err = wx.StaticText(self, label='Select/Insert a path to the netive images folder')
         self.image_err.SetForegroundColour((255, 0, 0))
 
         background_box = BoxMenu(wx.HORIZONTAL)
-        background_button = wx.Button(self, wx.ALIGN_LEFT, label='background', size=(70, 30))
+        background_button = wx.Button(self, wx.ALIGN_LEFT, label='Output location', size=(100, 30))
         background_button.Bind(wx.EVT_BUTTON, self.bgclick)
-        self.bg_err = wx.StaticText(self, label='Select/Insert a background file path')
+        self.bg_err = wx.StaticText(self, label='Select/Insert path to output folder location')
         self.bg_err.SetForegroundColour((255, 0, 0))
 
+        name_box = BoxMenu(wx.HORIZONTAL)
+        name_text = wx.StaticText(self, label='Negative images file name : ')
+        self.name_err = wx.StaticText(self, label='Insert the desired name for the output file')
+        self.name_err.SetForegroundColour((255, 0, 0))
+
+        confirmbg_box = BoxMenu(wx.HORIZONTAL)
+        confirmbg_button = wx.Button(self, wx.ALIGN_CENTER, label='confirm', size=(70, 30))
+        confirmbg_button.Bind(wx.EVT_BUTTON, self.confirmbgclick)
+
         nr_box = BoxMenu(wx.HORIZONTAL)
-        nr_text = wx.StaticText(self, label='Number of images : ')
-        self.nr_err = wx.StaticText(self, label='Insert the number of images')
+        nr_text = wx.StaticText(self, label='Number of positive images : ')
+        self.nr_err = wx.StaticText(self, label='Insert the number of positive images')
         self.nr_err.SetForegroundColour((255, 0, 0))
 
-        x_box = BoxMenu(wx.HORIZONTAL)
-        x_text = wx.StaticText(self, label='X Coord : ')
-        self.x_err = wx.StaticText(self, label='Insert the X coordonate')
-        self.x_err.SetForegroundColour((255, 0, 0))
+        pos_box = BoxMenu(wx.HORIZONTAL)
+        pos_button = wx.Button(self, wx.ALIGN_LEFT, label='Positive path', size=(100, 30))
+        pos_button.Bind(wx.EVT_BUTTON, self.posclick)
+        self.pos_err = wx.StaticText(self, label='Insert the annotations file path')
+        self.pos_err.SetForegroundColour((255, 0, 0))
 
-        y_box = BoxMenu(wx.HORIZONTAL)
-        y_text = wx.StaticText(self, label='Y Coord : ')
-        self.y_err = wx.StaticText(self, label='Insert the Y coordonate')
-        self.y_err.SetForegroundColour((255, 0, 0))
+        out_box = BoxMenu(wx.HORIZONTAL)
+        out_button = wx.Button(self, wx.ALIGN_LEFT, label='Vector location', size=(100, 30))
+        out_button.Bind(wx.EVT_BUTTON, self.outclick)
+        self.out_err = wx.StaticText(self, label='Select/Insert path to output folder location')
+        self.out_err.SetForegroundColour((255, 0, 0))
 
-        z_box = BoxMenu(wx.HORIZONTAL)
-        z_text = wx.StaticText(self, label='Z Coord : ')
-        self.z_err = wx.StaticText(self, label='Insert the Z coordonate')
-        self.z_err.SetForegroundColour((255, 0, 0))
-
-        output_box = BoxMenu(wx.HORIZONTAL)
-        output_text = wx.StaticText(self, label='Output format type : ')
-        self.output_button1 = wx.RadioButton(self, 7, 'jpg', (200, 27))
-        self.output_button2 = wx.RadioButton(self, 7, 'png', (200, 27))
-        self.output_err = wx.StaticText(self, label='Select the format type')
-        self.output_err.SetForegroundColour((255, 0, 0))
+        name2_box = BoxMenu(wx.HORIZONTAL)
+        name2_text = wx.StaticText(self, label='Name of the new vector file : ')
+        self.name2_err = wx.StaticText(self, label='Insert the desired name for the vector file')
+        self.name2_err.SetForegroundColour((255, 0, 0))
 
         confirm_box = BoxMenu(wx.HORIZONTAL)
-        confirm_button = wx.Button(self, wx.ALIGN_CENTER, label='confirm', size=(70, 30))
+        confirm_button = wx.Button(self, wx.ALIGN_CENTER, label='Create', size=(70, 30))
         confirm_button.Bind(wx.EVT_BUTTON, self.confirmclick)
 
         self.image_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
         self.bg_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
-        self.nr = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(70, 30))
-        self.x = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(70, 30))
-        self.y = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(70, 30))
-        self.z = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(70, 30))
+        self.name = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+        self.nr = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+        self.pos = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
+        self.out = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
+        self.name2 = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
 
-        image_box.Add(image_button, 0, wx.RIGHT, 50)
+        image_box.Add(image_button, 0, wx.RIGHT, 61)
         image_box.Add(self.image_path, 0)
         image_box.Add(self.image_err, 0)
         self.image_err.Hide()
 
-        background_box.Add(background_button, 0, wx.RIGHT, 50)
+        background_box.Add(background_button, 0, wx.RIGHT, 61)
         background_box.Add(self.bg_path, 0)
         background_box.Add(self.bg_err, 0)
         self.bg_err.Hide()
 
-        nr_box.Add(nr_text, 0, wx.RIGHT, 12)
+        name_box.Add(name_text, 0, wx.RIGHT, 10)
+        name_box.Add(self.name, 0)
+        name_box.Add(self.name_err, 0)
+        self.name_err.Hide()
+
+        confirmbg_box.Add(confirmbg_button, 0)
+
+        nr_box.Add(nr_text, 0, wx.RIGHT, 30)
         nr_box.Add(self.nr, 0)
         nr_box.Add(self.nr_err, 0)
         self.nr_err.Hide()
 
-        x_box.Add(x_text, 0, wx.RIGHT, 67)
-        x_box.Add(self.x, 0)
-        x_box.Add(self.x_err, 0)
-        self.x_err.Hide()
+        pos_box.Add(pos_button, 0, wx.RIGHT, 79)
+        pos_box.Add(self.pos, 0)
+        pos_box.Add(self.pos_err, 0)
+        self.pos_err.Hide()
 
-        y_box.Add(y_text, 0, wx.RIGHT, 67)
-        y_box.Add(self.y, 0)
-        y_box.Add(self.y_err, 0)
-        self.y_err.Hide()
+        out_box.Add(out_button, 0, wx.RIGHT, 80)
+        out_box.Add(self.out, 0)
+        out_box.Add(self.out_err, 0)
+        self.out_err.Hide()
 
-        z_box.Add(z_text, 0, wx.RIGHT, 67)
-        z_box.Add(self.z, 0)
-        z_box.Add(self.z_err, 0)
-        self.z_err.Hide()
-
-        output_box.Add(output_text, wx.RIGHT, 67)
-        output_box.Add(self.output_button1, wx.RIGHT, 67)
-        output_box.Add(self.output_button2, wx.RIGHT, 67)
-        output_box.Add(self.output_err, 0)
-        self.output_err.Hide()
+        name2_box.Add(name2_text, 0, wx.RIGHT, 27)
+        name2_box.Add(self.name2, 0)
+        name2_box.Add(self.name2_err, 0)
+        self.name2_err.Hide()
 
         confirm_box.Add(confirm_button, 0)
 
         mainbox.Add(image_box, 0, wx.ALL, 5)
         mainbox.Add(background_box, 0, wx.ALL, 5)
+        mainbox.Add(name_box, 0, wx.ALL, 5)
+        mainbox.Add(confirmbg_box, 0, wx.ALIGN_CENTER)
+        mainbox.Add(pos_box, 0, wx.ALL, 5)
+        mainbox.Add(out_box, 0, wx.ALL, 5)
+        mainbox.Add(name2_box, 0, wx.ALL, 5)
         mainbox.Add(nr_box, 0, wx.ALL, 5)
-        mainbox.Add(x_box, 0, wx.ALL, 5)
-        mainbox.Add(y_box, 0, wx.ALL, 5)
-        mainbox.Add(z_box, 0, wx.ALL, 5)
-        mainbox.Add(output_box, 0, wx.ALL, 5)
-        mainbox.Add(confirm_box, 0, wx.ALIGN_RIGHT)
+        mainbox.Add(confirm_box, 0, wx.ALIGN_CENTER)
 
         self.SetSizer(mainbox)
         self.Layout()
 
     def imclick(self, event):
-        file_search = wx.FileDialog(self, 'Open', '', '', 'Text files (*.txt)|*.txt',
-                                    wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        file_search = wx.DirDialog(self, 'Choose media directory', '', style=wx.DD_DEFAULT_STYLE)
         file_search.ShowModal()
         path = file_search.GetPath()
         self.image_path.SetValue(path)
         file_search.Destroy()
 
     def bgclick(self, event):
-        bg_search = wx.FileDialog(self, 'Open', '', '', 'Text files (*.txt)|*.txt',
-                                  wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        bg_search = wx.DirDialog(self, 'Choose media directory', '', style=wx.DD_DEFAULT_STYLE)
         bg_search.ShowModal()
         path = bg_search.GetPath()
         self.bg_path.SetValue(path)
         bg_search.Destroy()
 
-    def confirmclick(self, event):
+    def confirmbgclick(self, event):
+        ok = 0
+
         if not self.image_path.GetValue():
             self.image_err.Show()
             self.image_err.GetParent().Layout()
+            ok = 1
 
         if not self.bg_path.GetValue():
             self.bg_err.Show()
             self.bg_err.GetParent().Layout()
+            ok = 1
 
+        if not self.name.GetValue():
+            self.name_err.Show()
+            self.name_err.GetParent().Layout()
+            ok = 1
+
+        if ok == 1:
+            pass
+
+        self.image_err.Hide()
+        self.bg_err.Hide()
+        self.name_err.Hide()
+
+        global displayed_panel
+        panels[displayed_panel].Hide()
+        panels['output_panel'].Show()
+        panels['output_panel'].GetParent().Layout()
+        displayed_panel = 'output_panel'
+
+        LicentaBackend.createBg.createbg(self.image_path.GetValue(), self.bg_path.GetValue(), self.name.GetValue(),
+                                         printfunct=panels['output_panel'].printline)
+        #LicentaBackend.createBg.createbg(r'C:\Users\Serban\Desktop\LicentaResources\personneg',
+                                         #r'C:\Users\Serban\Desktop\LicentaResources', r'neg',
+                                         #printfunct=panels['output_panel'].printline)
+
+    def posclick(self, event):
+        pos_search = wx.FileDialog(self, 'Open', '', '', 'Text files (*.txt)|*.txt',
+                                   wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        pos_search.ShowModal()
+        path = pos_search.GetPath()
+        self.pos.SetValue(path)
+        pos_search.Destroy()
+
+    def outclick(self, event):
+        out_search = wx.DirDialog(self, 'Choose media directory', '', style=wx.DD_DEFAULT_STYLE)
+        out_search.ShowModal()
+        path = out_search.GetPath()
+        self.out.SetValue(path)
+        out_search.Destroy()
+
+    def confirmclick(self, event):
+        ok = 0
         if not self.nr.GetValue():
             self.nr_err.Show()
             self.nr_err.GetParent().Layout()
+            ok = 1
 
-        if not self.x.GetValue():
-            self.x_err.Show()
-            self.x_err.GetParent().Layout()
+        if not self.pos.GetValue():
+            self.pos_err.Show()
+            self.pos_err.GetParent().Layout()
+            ok = 1
 
-        if not self.y.GetValue():
-            self.y_err.Show()
-            self.y_err.GetParent().Layout()
+        if not self.out.GetValue():
+            self.out_err.Show()
+            self.out_err.GetParent().Layout()
+            ok = 1
 
-        if not self.z.GetValue():
-            self.z_err.Show()
-            self.z_err.GetParent().Layout()
+        if not self.name2.GetValue():
+            self.name2_err.Show()
+            self.name2_err.GetParent().Layout()
+            ok = 1
 
-        if not self.output_button1.GetValue() and not self.output_button2.GetValue():
-            self.output_err.Show()
-            self.output_err.GetParent().Layout()
+        if ok == 1:
+            #return
+            pass
+
+        global displayed_panel
+        panels[displayed_panel].Hide()
+        panels['output_panel'].Show()
+        panels['output_panel'].GetParent().Layout()
+        displayed_panel = 'output_panel'
+
+        LicentaBackend.vect.create_vec(self.pos.GetValue(), self.out.GetValue(),
+                                       self.name.GetValue(), self.nr.GetValue(),
+                                       printfunct=panels['output_panel'].printline)
 
 
-class HelpPanel(wx.Panel):
+class CropPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
+
+        mainbox = wx.BoxSizer(wx.VERTICAL)
+
+        positive_box = BoxMenu(wx.HORIZONTAL)
+        positive_button = wx.Button(self, wx.ALIGN_LEFT, label='Positive Images', size=(100, 30))
+        positive_button.Bind(wx.EVT_BUTTON, self.posclick)
+        self.positive_err = wx.StaticText(self, label='Select/Insert a path to the positive images folder')
+        self.positive_err.SetForegroundColour((255, 0, 0))
+
+        output_box = BoxMenu(wx.HORIZONTAL)
+        output_button = wx.Button(self, wx.ALIGN_LEFT, label='Output location', size=(100, 30))
+        output_button.Bind(wx.EVT_BUTTON, self.outclick)
+        self.output_err = wx.StaticText(self, label='Select/Insert path to output folder location')
+        self.output_err.SetForegroundColour((255, 0, 0))
+
+        name_box = BoxMenu(wx.HORIZONTAL)
+        name_text = wx.StaticText(self, label='Positive images file name : ')
+        self.name_err = wx.StaticText(self, label='Insert the desired name for the output file')
+        self.name_err.SetForegroundColour((255, 0, 0))
+
+        height_box = BoxMenu(wx.HORIZONTAL)
+        height_text = wx.StaticText(self, label='Maximum Window height : ')
+        self.height_err = wx.StaticText(self, label='Insert the max window height for the images')
+        self.height_err.SetForegroundColour((255, 0, 0))
+
+        resize_box = BoxMenu(wx.HORIZONTAL)
+        resize_text = wx.StaticText(self, label='Resize factor : ')
+        self.resize_err = wx.StaticText(self, label='Insert the resize factor for the images')
+        self.resize_err.SetForegroundColour((255, 0, 0))
+
+        confirm_box = BoxMenu(wx.HORIZONTAL)
+        confirm_button = wx.Button(self, wx.ALIGN_CENTER, label='confirm', size=(70, 30))
+        confirm_button.Bind(wx.EVT_BUTTON, self.confirmclick)
+
+        self.positive_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
+        self.output_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
+        self.name = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+        self.height = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+        self.resize = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+
+        positive_box.Add(positive_button, 0, wx.RIGHT, 61)
+        positive_box.Add(self.positive_path, 0)
+        positive_box.Add(self.positive_err, 0)
+        self.positive_err.Hide()
+
+        output_box.Add(output_button, 0, wx.RIGHT, 61)
+        output_box.Add(self.output_path, 0)
+        output_box.Add(self.output_err, 0)
+        self.output_err.Hide()
+
+        name_box.Add(name_text, 0, wx.RIGHT, 12)
+        name_box.Add(self.name, 0)
+        name_box.Add(self.name_err, 0)
+        self.name_err.Hide()
+
+        height_box.Add(height_text, 0, wx.RIGHT, 8)
+        height_box.Add(self.height, 0)
+        height_box.Add(self.height_err, 0)
+        self.height_err.Hide()
+
+        resize_box.Add(resize_text, 0, wx.RIGHT, 79)
+        resize_box.Add(self.resize, 0)
+        resize_box.Add(self.resize_err, 0)
+        self.resize_err.Hide()
+
+        confirm_box.Add(confirm_button, 0)
+
+        mainbox.Add(positive_box, 0, wx.ALL, 5)
+        mainbox.Add(output_box, 0, wx.ALL, 5)
+        mainbox.Add(name_box, 0, wx.ALL, 5)
+        mainbox.Add(height_box, 0, wx.ALL, 5)
+        mainbox.Add(resize_box, 0, wx.ALL, 5)
+        mainbox.Add(confirm_box, 0, wx.ALIGN_CENTER)
+
+        self.SetSizer(mainbox)
+        self.Layout()
+
+    def posclick(self, event):
+        file_search = wx.DirDialog(self, 'Choose media directory', '', style=wx.DD_DEFAULT_STYLE)
+        file_search.ShowModal()
+        path = file_search.GetPath()
+        self.positive_path.SetValue(path)
+        file_search.Destroy()
+
+    def outclick(self, event):
+        file_search = wx.DirDialog(self, 'Choose media directory', '', style=wx.DD_DEFAULT_STYLE)
+        file_search.ShowModal()
+        path = file_search.GetPath()
+        self.output_path.SetValue(path)
+        file_search.Destroy()
+
+    def confirmclick(self, event):
+        ok = 0
+
+        if not self.positive_path.GetValue():
+            self.positive_err.Show()
+            self.positive_err.GetParent().Layout()
+            ok = 1
+
+        if not self.output_path.GetValue():
+            self.output_err.Show()
+            self.output_err.GetParent().Layout()
+            ok = 1
+
+        if not self.name.GetValue():
+            self.name_err.Show()
+            self.name_err.GetParent().Layout()
+            ok = 1
+
+        if not self.height.GetValue():
+            self.height_err.Show()
+            self.height.GetParent().Layout()
+            ok = 1
+
+        if not self.resize.GetValue():
+            self.resize_err.Show()
+            self.resize_err.GetParent().Layout()
+            ok = 1
+
+        if ok == 1:
+            pass
+        #   return
+
+        self.positive_err.Hide()
+        self.output_err.Hide()
+        self.name_err.Hide()
+        self.height_err.Hide()
+        self.resize_err.Hide()
+
+        LicentaBackend.annotation.annotate(self.positive_path.GetValue(), self.output_path.GetValue(),
+                                           self.name.GetValue(), self.height.GetValue(), self.resize.GetValue())
 
 
 
