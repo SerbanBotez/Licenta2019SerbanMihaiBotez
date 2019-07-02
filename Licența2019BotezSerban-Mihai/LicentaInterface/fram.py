@@ -5,6 +5,7 @@ import LicentaBackend.haardetection
 import LicentaBackend.createBg
 import LicentaBackend.annotation
 import LicentaBackend.vect
+import LicentaBackend.detection
 
 
 panels = {}
@@ -25,6 +26,7 @@ class MainFrame(wx.Frame):
 
         menu = MenuPanel(self)
         detection = DetectionPanel(self)
+        classifier = ClassifierPanel(self)
         recognition = RecognitionPanel(self)
         full_detection = FullDetectionPanel(self)
         train_cnn = TrainCNNPanel(self)
@@ -33,11 +35,9 @@ class MainFrame(wx.Frame):
         create_samples = CreateSamplesPanel(self)
         crop_panel = CropPanel(self)
 
-        #menu.SetBackgroundColour('blue')
-        recognition.SetBackgroundColour('red')
-
         global panels, displayed_panel
         panels['detection'] = detection
+        panels['classifier'] = classifier
         panels['recognition'] = recognition
         panels['train_haar'] = train_haar
         panels['create_samples'] = create_samples
@@ -49,6 +49,7 @@ class MainFrame(wx.Frame):
         frame_box = wx.BoxSizer(wx.VERTICAL)
         frame_box.Add(menu, 1, wx.EXPAND)
         frame_box.Add(detection, 6, wx.EXPAND)
+        frame_box.Add(classifier, 6, wx.EXPAND)
         frame_box.Add(recognition, 6, wx.EXPAND)
         frame_box.Add(full_detection, 6, wx.EXPAND)
         frame_box.Add(train_cnn, 6, wx.EXPAND)
@@ -57,6 +58,7 @@ class MainFrame(wx.Frame):
         frame_box.Add(create_samples, 6, wx.EXPAND)
         frame_box.Add(crop_panel, 6, wx.EXPAND)
 
+        classifier.Hide()
         recognition.Hide()
         full_detection.Hide()
         train_cnn.Hide()
@@ -76,7 +78,7 @@ class MenuPanel(wx.Panel):
 
         menu = BoxMenu(wx.HORIZONTAL)
         button1 = wx.Button(self, label='Detection', size=(80, 50))
-        button2 = wx.Button(self, label='Recognition', size=(80, 50))
+        button2 = wx.Button(self, label='Classifier', size=(80, 50))
         button3 = wx.Button(self, label='Full Detection', size=(80, 50))
         button4 = wx.Button(self, label='Train CNN', size=(80, 50))
         button5 = wx.Button(self, label='Train Haar Cl', size=(80, 50))
@@ -113,9 +115,9 @@ class MenuPanel(wx.Panel):
         print('a fost apasat butonul 2')
         global displayed_panel
         panels[displayed_panel].Hide()
-        panels['recognition'].Show()
-        panels['recognition'].GetParent().Layout()
-        displayed_panel = 'recognition'
+        panels['classifier'].Show()
+        panels['classifier'].GetParent().Layout()
+        displayed_panel = 'classifier'
 
     def click3(self, event):
         print('a fost apasat butonul 3')
@@ -162,7 +164,7 @@ class BoxMenu(wx.BoxSizer):
         super().__init__(orient)
 
 
-class DetectionPanel(wx.Panel):
+class ClassifierPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -397,9 +399,153 @@ class TrainCNNPanel(wx.Panel):
         super().__init__(parent)
 
 
-class TrainHaarClPanel(wx.Panel):
+class DetectionPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
+
+        mainbox = wx.BoxSizer(wx.VERTICAL)
+
+        image_box = BoxMenu(wx.HORIZONTAL)
+        image_button = wx.Button(self, wx.ALIGN_LEFT, label='Image path', size=(100, 30))
+        image_button.Bind(wx.EVT_BUTTON, self.imclick)
+        self.image_err = wx.StaticText(self, label='Select/Insert a path to the image used for detection')
+        self.image_err.SetForegroundColour((255, 0, 0))
+
+        classifier_box = BoxMenu(wx.HORIZONTAL)
+        classifier_button = wx.Button(self, wx.ALIGN_LEFT, label='Classifier location', size=(100, 30))
+        classifier_button.Bind(wx.EVT_BUTTON, self.bgclick)
+        self.clas_err = wx.StaticText(self, label='Select/Insert path to the classifier location')
+        self.clas_err.SetForegroundColour((255, 0, 0))
+
+        name_box = BoxMenu(wx.HORIZONTAL)
+        name_text = wx.StaticText(self, label='Animal name : ')
+        self.name_err = wx.StaticText(self, label='Insert the name of the animal found')
+        self.name_err.SetForegroundColour((255, 0, 0))
+
+        scale_box = BoxMenu(wx.HORIZONTAL)
+        scale_text = wx.StaticText(self, label='Scale factor : ')
+        self.scale_err = wx.StaticText(self, label='Insert the desired scale factor value')
+        self.scale_err.SetForegroundColour((255, 0, 0))
+
+        nr_box = BoxMenu(wx.HORIZONTAL)
+        nr_text = wx.StaticText(self, label='Minimum neighbours : ')
+        self.nr_err = wx.StaticText(self, label='Insert the desired value for the minimum neighbours')
+        self.nr_err.SetForegroundColour((255, 0, 0))
+
+        nr2_box = BoxMenu(wx.HORIZONTAL)
+        nr2_text = wx.StaticText(self, label='Minimum size : ')
+        self.nr2_err = wx.StaticText(self, label='Insert the number of positive images')
+        self.nr2_err.SetForegroundColour((255, 0, 0))
+
+        confirm_box = BoxMenu(wx.HORIZONTAL)
+        confirm_button = wx.Button(self, wx.ALIGN_CENTER, label='confirm', size=(70, 30))
+        confirm_button.Bind(wx.EVT_BUTTON, self.confirmclick)
+
+        self.image_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
+        self.clas_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
+        self.name = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+        self.scale = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+        self.nr = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+        self.nr2 = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+
+        image_box.Add(image_button, 0, wx.RIGHT, 61)
+        image_box.Add(self.image_path, 0)
+        image_box.Add(self.image_err, 0)
+        self.image_err.Hide()
+
+        classifier_box.Add(classifier_button, 0, wx.RIGHT, 61)
+        classifier_box.Add(self.clas_path, 0)
+        classifier_box.Add(self.clas_err, 0)
+        self.clas_err.Hide()
+
+        name_box.Add(name_text, 0, wx.RIGHT, 80)
+        name_box.Add(self.name, 0)
+        name_box.Add(self.name_err, 0)
+        self.name_err.Hide()
+
+        scale_box.Add(scale_text, 0, wx.RIGHT, 89)
+        scale_box.Add(self.scale, 0)
+        scale_box.Add(self.scale_err, 0)
+        self.scale_err.Hide()
+
+        nr_box.Add(nr_text, 0, wx.RIGHT, 33)
+        nr_box.Add(self.nr, 0)
+        nr_box.Add(self.nr_err, 0)
+        self.nr_err.Hide()
+
+        nr2_box.Add(nr2_text, 0, wx.RIGHT, 74)
+        nr2_box.Add(self.nr2, 0)
+        nr2_box.Add(self.nr2_err, 0)
+        self.nr2_err.Hide()
+
+        confirm_box.Add(confirm_button, 0)
+
+        mainbox.Add(image_box, 0, wx.ALL, 5)
+        mainbox.Add(classifier_box, 0, wx.ALL, 5)
+        mainbox.Add(name_box, 0, wx.ALL, 5)
+        mainbox.Add(scale_box, 0, wx.ALL, 5)
+        mainbox.Add(nr_box, 0, wx.ALL, 5)
+        mainbox.Add(nr2_box, 0, wx.ALL, 5)
+        mainbox.Add(confirm_box, 0, wx.ALIGN_CENTER)
+
+        self.SetSizer(mainbox)
+        self.Layout()
+
+    def imclick(self, event):
+        file_search = wx.FileDialog(self, 'Open', '', '', 'Image files (*.jpg)|*.jpg',
+                                    wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        file_search.ShowModal()
+        path = file_search.GetPath()
+        self.image_path.SetValue(path)
+        file_search.Destroy()
+
+    def bgclick(self, event):
+        bg_search = wx.FileDialog(self, 'Open', '', '', 'XML files (*.xml)|*.xml',
+                                  wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        bg_search.ShowModal()
+        path = bg_search.GetPath()
+        self.clas_path.SetValue(path)
+        bg_search.Destroy()
+
+    def confirmclick(self,event):
+        ok = 0
+
+        if not self.image_path.GetValue():
+            self.image_err.Show()
+            self.image_err.GetParent().Layout()
+            ok = 1
+
+        if not self.clas_path.GetValue():
+            self.clas_err.Show()
+            self.clas_err.GetParent().Layout()
+            ok = 1
+
+        if not self.name.GetValue():
+            self.name_err.Show()
+            self.name_err.GetParent().Layout()
+            ok = 1
+
+        if not self.scale.GetValue():
+            self.scale_err.Show()
+            self.scale.GetParent().Layout()
+            ok = 1
+
+        if not self.nr.GetValue():
+            self.nr_err.Show()
+            self.nr_err.GetParent().Layout()
+            ok = 1
+        if not self.nr2.GetValue():
+            self.nr2_err.Show()
+            self.nr2_err.GetParent().Layout()
+            ok = 1
+
+        if ok == 1:
+            pass
+        #   return
+
+        LicentaBackend.detection.detect_faces(self.image_path.GetValue(), self.clas_path.GetValue(),
+                                              self.name.GetValue(),self.scale.GetValue(),
+                                              self.nr.GetValue(), self.nr2.GetValue())
 
 
 # class RedirectText taken from
@@ -429,6 +575,13 @@ class OutputPanel(wx.Panel):
         redir = RedirectText(self.outputctrl)
         sys.stdout = redir
         print(st)
+
+
+class TrainHaarClPanel(wx.Panel):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        mainbox = wx.BoxSizer(wx.VERTICAL)
 
 
 class CreateSamplesPanel(wx.Panel):

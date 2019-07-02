@@ -12,7 +12,7 @@
     <session id="-559243629">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="32" />
+          <entry key="project.closed" value="34" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="1" />
@@ -27,38 +27,39 @@
           <entry key="project.open.time.35" value="1" />
           <entry key="project.open.time.36" value="1" />
           <entry key="project.open.time.37" value="3" />
+          <entry key="project.open.time.38" value="1" />
           <entry key="project.open.time.40" value="1" />
           <entry key="project.open.time.41" value="1" />
           <entry key="project.open.time.43" value="1" />
-          <entry key="project.open.time.45" value="1" />
+          <entry key="project.open.time.45" value="2" />
           <entry key="project.open.time.46" value="1" />
           <entry key="project.open.time.59" value="1" />
           <entry key="project.open.time.6" value="1" />
           <entry key="project.open.time.7" value="1" />
           <entry key="project.open.time.83" value="1" />
-          <entry key="project.opened" value="34" />
+          <entry key="project.opened" value="36" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="49" />
+          <entry key="py" value="57" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="49" />
+          <entry key="Python" value="57" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="6" />
-          <entry key="py" value="9978" />
+          <entry key="py" value="12376" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="6" />
-          <entry key="Python" value="9978" />
+          <entry key="Python" value="12376" />
         </counts>
       </usages-collector>
     </session>
@@ -68,33 +69,45 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LicentaInterface/fram.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="473">
-              <caret line="654" lean-forward="true" selection-start-line="654" selection-end-line="654" />
+            <state relative-caret-position="222">
+              <caret line="549" lean-forward="true" selection-start-line="549" selection-end-line="549" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
-                <marker date="1562010621568" expanded="true" signature="21949:22180" ph="..." />
+                <element signature="e#15071#15139#0" />
+                <element signature="e#14990#19798#0" />
+                <marker date="1562095876699" expanded="true" signature="20675:20787" ph="..." />
+                <marker date="1562095876699" expanded="true" signature="27822:28053" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/LicentaBackend/vect.py">
+        <entry file="file://$PROJECT_DIR$/LicentaBackend/detection.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="35" column="48" selection-start-line="35" selection-start-column="48" selection-end-line="35" selection-end-column="48" />
+            <state relative-caret-position="391">
+              <caret line="23" column="19" lean-forward="true" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
               <folding>
-                <element signature="e#0#17#0" expanded="true" />
+                <marker date="1562095963604" expanded="true" signature="90:95" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/LicentaBackend/haardetection.py">
+        <entry file="file://$PROJECT_DIR$/LicentaBackend/tes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="21" column="8" selection-start-line="21" selection-start-column="8" selection-end-line="22" selection-end-column="35" />
+            <state relative-caret-position="51">
+              <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/LicentaBackend/test.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-320">
+              <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
             </state>
           </provider>
         </entry>
@@ -115,7 +128,6 @@
         <option value="$PROJECT_DIR$/LicentaBackend/__init__.py" />
         <option value="$PROJECT_DIR$/LicentaInterface/main.py" />
         <option value="$PROJECT_DIR$/LicentaInterface/frame.py" />
-        <option value="$PROJECT_DIR$/LicentaBackend/detection.py" />
         <option value="$PROJECT_DIR$/LicentaInterface/panels.py" />
         <option value="$PROJECT_DIR$/LicentaBackend/test.py" />
         <option value="$PROJECT_DIR$/LicentaBackend/haardetection.py" />
@@ -125,7 +137,9 @@
         <option value="$PROJECT_DIR$/LicentaBackend/annotation.py" />
         <option value="$PROJECT_DIR$/LicentaBackend/command_output.py" />
         <option value="$PROJECT_DIR$/LicentaBackend/vect.py" />
+        <option value="$PROJECT_DIR$/LicentaBackend/tess.py" />
         <option value="$PROJECT_DIR$/LicentaInterface/fram.py" />
+        <option value="$PROJECT_DIR$/LicentaBackend/detection.py" />
       </list>
     </option>
   </component>
@@ -139,7 +153,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -161,6 +174,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -179,7 +193,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.fram">
-    <configuration name="annotation" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="detection" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Licenta" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -191,28 +205,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/LicentaBackend/annotation.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="createBg" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Licenta" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/LicentaBackend" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/LicentaBackend/createBg.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/LicentaBackend/detection.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -263,6 +256,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="tess" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Licenta" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/LicentaBackend" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/LicentaBackend/tess.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="vect" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Licenta" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -286,18 +300,18 @@
     </configuration>
     <list>
       <item itemvalue="Python.fram" />
-      <item itemvalue="Python.createBg" />
-      <item itemvalue="Python.annotation" />
       <item itemvalue="Python.vect" />
       <item itemvalue="Python.tes" />
+      <item itemvalue="Python.detection" />
+      <item itemvalue="Python.tess" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.fram" />
+        <item itemvalue="Python.detection" />
+        <item itemvalue="Python.tess" />
         <item itemvalue="Python.vect" />
         <item itemvalue="Python.tes" />
-        <item itemvalue="Python.annotation" />
-        <item itemvalue="Python.createBg" />
       </list>
     </recent_temporary>
   </component>
@@ -327,7 +341,7 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17559524" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17559524" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -367,6 +381,17 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <default-breakpoints>
+        <breakpoint suspend="NONE" type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/__init__.py">
@@ -410,20 +435,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LicentaBackend/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-102">
-          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LicentaBackend/tes.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="10" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/LicentaBackend/createBg.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
@@ -435,38 +446,65 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
           <caret line="3" selection-start-line="3" selection-end-line="3" />
-          <folding>
-            <element signature="e#0#17#0" expanded="true" />
-            <marker date="1562003441661" expanded="true" signature="362:364" ph="..." />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/LicentaBackend/command_output.py" />
-    <entry file="file://$PROJECT_DIR$/LicentaBackend/haardetection.py">
+    <entry file="file://$PROJECT_DIR$/LicentaBackend/vect.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="21" column="8" selection-start-line="21" selection-start-column="8" selection-end-line="22" selection-end-column="35" />
+        <state relative-caret-position="561">
+          <caret line="35" column="48" selection-start-line="35" selection-start-column="48" selection-end-line="35" selection-end-column="48" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LicentaBackend/vect.py">
+    <entry file="file://$PROJECT_DIR$/LicentaBackend/haardetection.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="35" column="48" selection-start-line="35" selection-start-column="48" selection-end-line="35" selection-end-column="48" />
+        <state relative-caret-position="171">
+          <caret line="17" column="36" lean-forward="true" selection-start-line="17" selection-start-column="36" selection-end-line="17" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LicentaBackend/tes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LicentaBackend/tess.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="8" lean-forward="true" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LicentaBackend/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-320">
+          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LicentaBackend/detection.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="23" column="19" lean-forward="true" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
           <folding>
-            <element signature="e#0#17#0" expanded="true" />
+            <marker date="1562095963604" expanded="true" signature="90:95" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/LicentaInterface/fram.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="473">
-          <caret line="654" lean-forward="true" selection-start-line="654" selection-end-line="654" />
+        <state relative-caret-position="222">
+          <caret line="549" lean-forward="true" selection-start-line="549" selection-end-line="549" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
-            <marker date="1562010621568" expanded="true" signature="21949:22180" ph="..." />
+            <element signature="e#15071#15139#0" />
+            <element signature="e#14990#19798#0" />
+            <marker date="1562095876699" expanded="true" signature="20675:20787" ph="..." />
+            <marker date="1562095876699" expanded="true" signature="27822:28053" ph="..." />
           </folding>
         </state>
       </provider>
