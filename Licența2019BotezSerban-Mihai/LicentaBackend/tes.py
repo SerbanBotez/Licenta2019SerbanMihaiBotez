@@ -17,6 +17,14 @@ def remove_spaces(path):
                 file.write(line)
                 print(line)
 
-crop_annotate(r'C:\Users\Serban\Desktop\LicentaResources\anna.txt')
+#crop_annotate(r'C:\Users\Serban\Desktop\LicentaResources\anna.txt')
 #remove_spaces(r'C:\Users\Serban\Desktop\LicentaResources\anna.txt')
-print('da')
+#print('da')
+
+test = '0.25'
+
+test = test.split(',')
+x = int(test[0])
+y = int(test[1])
+
+print(test, x, y, type(test), type(x), type(y))

@@ -28,9 +28,7 @@ class MainFrame(wx.Frame):
         detection = DetectionPanel(self)
         classifier = ClassifierPanel(self)
         recognition = RecognitionPanel(self)
-        full_detection = FullDetectionPanel(self)
         train_cnn = TrainCNNPanel(self)
-        train_haar = TrainHaarClPanel(self)
         output_panel = OutputPanel(self)
         create_samples = CreateSamplesPanel(self)
         crop_panel = CropPanel(self)
@@ -39,7 +37,7 @@ class MainFrame(wx.Frame):
         panels['detection'] = detection
         panels['classifier'] = classifier
         panels['recognition'] = recognition
-        panels['train_haar'] = train_haar
+        panels['train_CNN'] = train_cnn
         panels['create_samples'] = create_samples
         panels['output_panel'] = output_panel
         panels['crop_panel'] = crop_panel
@@ -51,18 +49,14 @@ class MainFrame(wx.Frame):
         frame_box.Add(detection, 6, wx.EXPAND)
         frame_box.Add(classifier, 6, wx.EXPAND)
         frame_box.Add(recognition, 6, wx.EXPAND)
-        frame_box.Add(full_detection, 6, wx.EXPAND)
         frame_box.Add(train_cnn, 6, wx.EXPAND)
-        frame_box.Add(train_haar, 6, wx.EXPAND)
         frame_box.Add(output_panel, 6, wx.EXPAND)
         frame_box.Add(create_samples, 6, wx.EXPAND)
         frame_box.Add(crop_panel, 6, wx.EXPAND)
 
         classifier.Hide()
         recognition.Hide()
-        full_detection.Hide()
         train_cnn.Hide()
-        train_haar.Hide()
         output_panel.Hide()
         create_samples.Hide()
         crop_panel.Hide()
@@ -79,9 +73,8 @@ class MenuPanel(wx.Panel):
         menu = BoxMenu(wx.HORIZONTAL)
         button1 = wx.Button(self, label='Detection', size=(80, 50))
         button2 = wx.Button(self, label='Classifier', size=(80, 50))
-        button3 = wx.Button(self, label='Full Detection', size=(80, 50))
+        button3 = wx.Button(self, label='Recognition', size=(80, 50))
         button4 = wx.Button(self, label='Train CNN', size=(80, 50))
-        button5 = wx.Button(self, label='Train Haar Cl', size=(80, 50))
         button6 = wx.Button(self, label='Output', size=(80, 50))
         button7 = wx.Button(self, label='Make Samples', size=(80, 50))
         button8 = wx.Button(self, label='CropImages', size=(80, 50))
@@ -89,7 +82,7 @@ class MenuPanel(wx.Panel):
         button1.Bind(wx.EVT_BUTTON, self.click1)
         button2.Bind(wx.EVT_BUTTON, self.click2)
         button3.Bind(wx.EVT_BUTTON, self.click3)
-        button5.Bind(wx.EVT_BUTTON, self.click5)
+        button4.Bind(wx.EVT_BUTTON, self.click4)
         button6.Bind(wx.EVT_BUTTON, self.click6)
         button7.Bind(wx.EVT_BUTTON, self.click7)
         button8.Bind(wx.EVT_BUTTON, self.click8)
@@ -98,7 +91,6 @@ class MenuPanel(wx.Panel):
         menu.Add(button2, 0)
         menu.Add(button3, 0)
         menu.Add(button4, 0)
-        menu.Add(button5, 0)
         menu.Add(button6, 0)
         menu.Add(button7, 0)
         menu.Add(button8, 0)
@@ -121,15 +113,20 @@ class MenuPanel(wx.Panel):
 
     def click3(self, event):
         print('a fost apasat butonul 3')
+        global displayed_panel
+        panels[displayed_panel].Hide()
+        panels['recognition'].Show()
+        panels['recognition'].GetParent().Layout()
+        displayed_panel = 'recognition'
 
-    def click5(self, event):
-        print('a fost apasat butonul 5')
+    def click4(self, event):
+        print('a fost apasat butonul 4')
 
         global displayed_panel
         panels[displayed_panel].Hide()
-        panels['train_haar'].Show()
-        panels['train_haar'].GetParent().Layout()
-        displayed_panel = 'train_haar'
+        panels['train_CNN'].Show()
+        panels['train_CNN'].GetParent().Layout()
+        displayed_panel = 'train_CNN'
 
     def click6(self, event):
         print('a fost apasat butonul 6')
@@ -383,22 +380,6 @@ class ClassifierPanel(wx.Panel):
                                             printfct=panels['output_panel'].printline)
 
 
-
-class RecognitionPanel(wx.Panel):
-    def __init__(self, parent):
-        super().__init__(parent)
-
-
-class FullDetectionPanel(wx.Panel):
-    def __init__(self, parent):
-        super().__init__(parent)
-
-
-class TrainCNNPanel(wx.Panel):
-    def __init__(self, parent):
-        super().__init__(parent)
-
-
 class DetectionPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
@@ -571,17 +552,344 @@ class OutputPanel(wx.Panel):
         self.SetSizer(box)
         self.Layout()
 
+    #in generic utils_py am comentat  #sys.stdout.flush() la linia 424
     def printline(self, st):
         redir = RedirectText(self.outputctrl)
         sys.stdout = redir
         print(st)
 
 
-class TrainHaarClPanel(wx.Panel):
+class RecognitionPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
 
         mainbox = wx.BoxSizer(wx.VERTICAL)
+
+        training_box = BoxMenu(wx.HORIZONTAL)
+        training_button = wx.Button(self, wx.ALIGN_LEFT, label='Image path', size=(140, 30))
+        training_button.Bind(wx.EVT_BUTTON, self.imclick)
+        self.training_err = wx.StaticText(self, label='Select/Insert a path to a image')
+        self.training_err.SetForegroundColour((255, 0, 0))
+
+        model_box = BoxMenu(wx.HORIZONTAL)
+        model_button = wx.Button(self, wx.ALIGN_LEFT, label='Model location', size=(140, 30))
+        model_button.Bind(wx.EVT_BUTTON, self.modelclick)
+        self.model_err = wx.StaticText(self, label='Select/Insert a path to the model location')
+        self.model_err.SetForegroundColour((255, 0, 0))
+
+        binary_box = BoxMenu(wx.HORIZONTAL)
+        binary_button = wx.Button(self, wx.ALIGN_LEFT, label='Labels location', size=(140, 30))
+        binary_button.Bind(wx.EVT_BUTTON, self.binaryclick)
+        self.binary_err = wx.StaticText(self, label='Select/Insert a path to the labels location')
+        self.binary_err.SetForegroundColour((255, 0, 0))
+
+        width_box = BoxMenu(wx.HORIZONTAL)
+        width_text = wx.StaticText(self, label='Width : ')
+        self.width_err = wx.StaticText(self, label='Insert the desired width value')
+        self.width_err.SetForegroundColour((255, 0, 0))
+
+        height_box = BoxMenu(wx.HORIZONTAL)
+        height_text = wx.StaticText(self, label='Height : ')
+        self.height_err = wx.StaticText(self, label='Insert the desire height value')
+        self.height_err.SetForegroundColour((255, 0, 0))
+
+        confirm_box = BoxMenu(wx.HORIZONTAL)
+        confirm_button = wx.Button(self, wx.ALIGN_CENTER, label='confirm', size=(70, 30))
+        confirm_button.Bind(wx.EVT_BUTTON, self.confirmclick)
+
+        self.training_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
+        self.model_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
+        self.binary_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
+        self.width = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+        self.height = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+
+        training_box.Add(training_button, 0, wx.RIGHT, 61)
+        training_box.Add(self.training_path, 0)
+        training_box.Add(self.training_err, 0)
+        self.training_err.Hide()
+
+        model_box.Add(model_button, 0, wx.RIGHT, 61)
+        model_box.Add(self.model_path, 0)
+        model_box.Add(self.model_err, 0)
+        self.model_err.Hide()
+
+        binary_box.Add(binary_button, 0, wx.RIGHT, 61)
+        binary_box.Add(self.binary_path, 0)
+        binary_box.Add(self.binary_err, 0)
+        self.binary_err.Hide()
+
+        width_box.Add(width_text, 0, wx.RIGHT, 50)
+        width_box.Add(self.width, 0)
+        width_box.Add(self.width_err, 0)
+        self.width_err.Hide()
+
+        height_box.Add(height_text, 0, wx.RIGHT, 47)
+        height_box.Add(self.height, 0)
+        height_box.Add(self.height_err, 0)
+        self.height_err.Hide()
+
+        confirm_box.Add(confirm_button, 0)
+
+        mainbox.Add(training_box, 0, wx.ALL, 5)
+        mainbox.Add(model_box, 0, wx.ALL, 5)
+        mainbox.Add(binary_box, 0, wx.ALL, 5)
+        mainbox.Add(width_box, 0, wx.ALL, 5)
+        mainbox.Add(height_box, 0, wx.ALL, 5)
+        mainbox.Add(confirm_box, 0, wx.CENTER)
+
+        self.SetSizer(mainbox)
+        self.Layout()
+
+    def imclick(self, event):
+        training_search = wx.FileDialog(self, 'Open', '', '', 'Images (*.jpg)|*.jpg',
+                                        wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        training_search.ShowModal()
+        path = training_search.GetPath()
+        self.training_path.SetValue(path)
+        training_search.Destroy()
+
+    def modelclick(self, event):
+        model_search = wx.FileDialog(self, 'Open', '', '', 'Model files (*.model)|*.model',
+                                        wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        model_search.ShowModal()
+        path = model_search.GetPath()
+        self.model_path.SetValue(path)
+        model_search.Destroy()
+
+    def binaryclick(self, event):
+        binary_search = wx.FileDialog(self, 'Open', '', '', 'Label binary files (*.pickle)|*.pickle',
+                                     wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        binary_search.ShowModal()
+        path = binary_search.GetPath()
+        self.binary_path.SetValue(path)
+        binary_search.Destroy()
+
+    def confirmclick(self, event):
+        ok = 0
+
+        if not self.training_path.GetValue():
+            self.training_err.Show()
+            self.training_err.GetParent().Layout()
+            ok = 1
+
+        if not self.model_path.GetValue():
+            self.model_err.Show()
+            self.model_path.GetParent().Layout()
+            ok = 1
+
+        if not self.binary_path.GetValue():
+            self.binary_err.Show()
+            self.binary_err.GetParent().Layout()
+            ok = 1
+
+        if not self.width.GetValue():
+            self.width_err.Show()
+            self.width_err.GetParent().Layout()
+            ok = 1
+
+        if not self.height.GetValue():
+            self.height_err.Show()
+            self.height_err.GetParent().Layout()
+            ok = 1
+
+        if ok == 1:
+            pass
+            #return
+
+        from LicentaBackend.recognition import recognize
+
+        LicentaBackend.recognition.recognize(self.training_path.GetValue(), self.model_path.GetValue(),
+                                             self.binary_path.GetValue(), self.width.GetValue(),
+                                             self.height.GetValue())
+
+
+class TrainCNNPanel(wx.Panel):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        mainbox = wx.BoxSizer(wx.VERTICAL)
+
+        training_box = BoxMenu(wx.HORIZONTAL)
+        training_button = wx.Button(self, wx.ALIGN_LEFT, label='Training Images', size=(140, 30))
+        training_button.Bind(wx.EVT_BUTTON, self.imclick)
+        self.training_err = wx.StaticText(self, label='Select/Insert a path to the training images folder')
+        self.training_err.SetForegroundColour((255, 0, 0))
+
+        model_box = BoxMenu(wx.HORIZONTAL)
+        model_button = wx.Button(self, wx.ALIGN_LEFT, label='Model Output location', size=(140, 30))
+        model_button.Bind(wx.EVT_BUTTON, self.modelclick)
+        self.model_err = wx.StaticText(self, label='Select/Insert a path to the output folder location')
+        self.model_err.SetForegroundColour((255, 0, 0))
+
+        binary_box = BoxMenu(wx.HORIZONTAL)
+        binary_button = wx.Button(self, wx.ALIGN_LEFT, label='Binary Label location', size=(140, 30))
+        binary_button.Bind(wx.EVT_BUTTON, self.binaryclick)
+        self.binary_err = wx.StaticText(self, label='Select/Insert a path to the output folder location')
+        self.binary_err.SetForegroundColour((255, 0, 0))
+
+        plot_box = BoxMenu(wx.HORIZONTAL)
+        plot_button = wx.Button(self, wx.ALIGN_LEFT, label='Plot Output location', size=(140, 30))
+        plot_button.Bind(wx.EVT_BUTTON, self.plotclick)
+        self.plot_err = wx.StaticText(self, label='Select/Insert a path to the output folder location')
+        self.plot_err.SetForegroundColour((255, 0, 0))
+
+        epoch_box = BoxMenu(wx.HORIZONTAL)
+        epoch_text = wx.StaticText(self, label='Number of Epochs : ')
+        self.epoch_err = wx.StaticText(self, label='Insert the desired epoch number')
+        self.epoch_err.SetForegroundColour((255, 0, 0))
+
+        batch_box = BoxMenu(wx.HORIZONTAL)
+        batch_text = wx.StaticText(self, label='Number of Batch Size : ')
+        self.batch_err = wx.StaticText(self, label='Insert the desired number for the batch size')
+        self.batch_err.SetForegroundColour((255, 0, 0))
+
+        test_box = BoxMenu(wx.HORIZONTAL)
+        test_text = wx.StaticText(self, label='Testing ration : ')
+        self.test_err = wx.StaticText(self, label='Insert the desired ratio for the testing data')
+        self.test_err.SetForegroundColour((255, 0, 0))
+
+        confirm_box = BoxMenu(wx.HORIZONTAL)
+        confirm_button = wx.Button(self, wx.ALIGN_CENTER, label='confirm', size=(70, 30))
+        confirm_button.Bind(wx.EVT_BUTTON, self.confirmclick)
+
+        self.training_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
+        self.model_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
+        self.binary_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
+        self.plot_path = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(300, 30))
+        self.epoch = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+        self.batch = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+        self.test = wx.TextCtrl(self, wx.ALIGN_LEFT, size=(100, 30))
+
+        training_box.Add(training_button, 0, wx.RIGHT, 61)
+        training_box.Add(self.training_path, 0)
+        training_box.Add(self.training_err, 0)
+        self.training_err.Hide()
+
+        model_box.Add(model_button, 0, wx.RIGHT, 61)
+        model_box.Add(self.model_path, 0)
+        model_box.Add(self.model_err, 0)
+        self.model_err.Hide()
+
+        binary_box.Add(binary_button, 0, wx.RIGHT, 61)
+        binary_box.Add(self.binary_path, 0)
+        binary_box.Add(self.binary_err, 0)
+        self.binary_err.Hide()
+
+        plot_box.Add(plot_button, 0, wx.RIGHT, 61)
+        plot_box.Add(self.plot_path, 0)
+        plot_box.Add(self.plot_err, 0)
+        self.plot_err.Hide()
+
+        epoch_box.Add(epoch_text, 0, wx.RIGHT, 50)
+        epoch_box.Add(self.epoch, 0)
+        epoch_box.Add(self.epoch_err, 0)
+        self.epoch_err.Hide()
+
+        batch_box.Add(batch_text, 0, wx.RIGHT, 36)
+        batch_box.Add(self.batch, 0)
+        batch_box.Add(self.batch_err, 0)
+        self.batch_err.Hide()
+
+        test_box.Add(test_text, 0, wx.RIGHT, 31)
+        test_box.Add(self.test, 0)
+        test_box.Add(self.test_err, 0)
+        self.test_err.Hide()
+
+        confirm_box.Add(confirm_button, 0)
+
+        mainbox.Add(training_box, 0, wx.ALL, 5)
+        mainbox.Add(model_box, 0, wx.ALL, 5)
+        mainbox.Add(binary_box, 0, wx.ALL, 5)
+        mainbox.Add(plot_box, 0, wx.ALL, 5)
+        mainbox.Add(epoch_box, 0, wx.ALL, 5)
+        mainbox.Add(batch_box, 0, wx.ALL, 5)
+        mainbox.Add(test_box, 0, wx.ALL, 5)
+        mainbox.Add(confirm_box, 0, wx.CENTER)
+
+        self.SetSizer(mainbox)
+        self.Layout()
+
+    def imclick(self,event):
+        training_search = wx.DirDialog(self, 'Choose media directory', '', style=wx.DD_DEFAULT_STYLE)
+        training_search.ShowModal()
+        path = training_search.GetPath()
+        self.training_path.SetValue(path)
+        training_search.Destroy()
+
+    def modelclick(self, event):
+        model_search = wx.DirDialog(self, 'Choose media directory', '', style=wx.DD_DEFAULT_STYLE)
+        model_search.ShowModal()
+        path = model_search.GetPath()
+        self.model_path.SetValue(path)
+        model_search.Destroy()
+
+    def binaryclick(self, event):
+        binary_search = wx.DirDialog(self, 'Choose media directory', '', style=wx.DD_DEFAULT_STYLE)
+        binary_search.ShowModal()
+        path = binary_search.GetPath()
+        self.binary_path.SetValue(path)
+        binary_search.Destroy()
+
+    def plotclick(self, event):
+        bg_search = wx.DirDialog(self, 'Choose media directory', '', style=wx.DD_DEFAULT_STYLE)
+        bg_search.ShowModal()
+        path = bg_search.GetPath()
+        self.plot_path.SetValue(path)
+        bg_search.Destroy()
+
+    def confirmclick(self, event):
+        ok = 0
+
+        if not self.training_path.GetValue():
+            self.training_err.Show()
+            self.training_err.GetParent().Layout()
+            ok = 1
+
+        if not self.model_path.GetValue():
+            self.model_err.Show()
+            self.model_path.GetParent().Layout()
+            ok = 1
+
+        if not self.binary_path.GetValue():
+            self.binary_err.Show()
+            self.binary_err.GetParent().Layout()
+            ok = 1
+
+        if not self.plot_path.GetValue():
+            self.plot_err.Show()
+            self.plot_err.GetParent().Layout()
+            ok = 1
+
+        if not self.epoch.GetValue():
+            self.epoch_err.Show()
+            self.epoch_err.GetParent().Layout()
+            ok = 1
+
+        if not self.test.GetValue():
+            self.test_err.Show()
+            self.test_err.GetParent().Layout()
+            ok = 1
+
+        if not self.batch.GetValue():
+            self.batch_err.Show()
+            self.batch_err.GetParent().Layout()
+            ok = 1
+
+        if ok == 1:
+            pass
+            #return
+
+        global displayed_panel
+        panels[displayed_panel].Hide()
+        panels['output_panel'].Show()
+        panels['output_panel'].GetParent().Layout()
+        displayed_panel = 'output_panel'
+
+        import LicentaBackend.train_model
+        LicentaBackend.train_model.create_mod(self.training_path.GetValue(), self.model_path.GetValue(),
+                                              self.binary_path.GetValue(), self.plot_path.GetValue(),
+                                              self.epoch.GetValue(), self.test.GetValue(), self.batch.GetValue(),
+                                              printfct=panels['output_panel'].printline)
 
 
 class CreateSamplesPanel(wx.Panel):
