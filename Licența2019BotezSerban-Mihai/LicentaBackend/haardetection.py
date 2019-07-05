@@ -18,13 +18,9 @@ def detect(data, vec, bg, pos, neg, stage, minhitrate, maxfalsealarmrate , print
     for line in run_command(train_haar_classifier):
         if line.decode() == '':
             break
-        #print(line.decode())
+        print(line.decode())
         if printfct:
             printfct(line.decode())
-
-
-#detect(r'C:\Users\Serban\Desktop\LicentaResources\Data', r'C:\Users\Serban\Desktop\LicentaResources\vecf.vec',
-#       r'C:\Users\Serban\Desktop\LicentaResources\bg.txt', '6', '1200', '5', '0.999', '0.5')
 
 
 

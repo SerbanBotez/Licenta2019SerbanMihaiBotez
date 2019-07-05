@@ -1,6 +1,5 @@
 import wx
 import sys
-import os
 import LicentaBackend.haardetection
 import LicentaBackend.createBg
 import LicentaBackend.annotation
@@ -97,14 +96,12 @@ class MenuPanel(wx.Panel):
         self.SetSizer(menu)
 
     def click1(self, event):
-        print('a fost apasat butonul 1')
         global displayed_panel
         panels[displayed_panel].Hide()
         panels['detection'].Show()
         displayed_panel = 'detection'
 
     def click2(self, event):
-        print('a fost apasat butonul 2')
         global displayed_panel
         panels[displayed_panel].Hide()
         panels['classifier'].Show()
@@ -112,7 +109,6 @@ class MenuPanel(wx.Panel):
         displayed_panel = 'classifier'
 
     def click3(self, event):
-        print('a fost apasat butonul 3')
         global displayed_panel
         panels[displayed_panel].Hide()
         panels['recognition'].Show()
@@ -120,7 +116,6 @@ class MenuPanel(wx.Panel):
         displayed_panel = 'recognition'
 
     def click4(self, event):
-        print('a fost apasat butonul 4')
 
         global displayed_panel
         panels[displayed_panel].Hide()
@@ -129,7 +124,6 @@ class MenuPanel(wx.Panel):
         displayed_panel = 'train_CNN'
 
     def click6(self, event):
-        print('a fost apasat butonul 6')
 
         global displayed_panel
         panels[displayed_panel].Hide()
@@ -138,7 +132,6 @@ class MenuPanel(wx.Panel):
         displayed_panel = 'output_panel'
 
     def click7(self, event):
-        print('a fost apasat butonul 7')
 
         global displayed_panel
         panels[displayed_panel].Hide()
@@ -147,7 +140,6 @@ class MenuPanel(wx.Panel):
         displayed_panel = 'create_samples'
 
     def click8(self, event):
-        print('a fost apasat butonul 8')
 
         global displayed_panel
         panels[displayed_panel].Hide()
@@ -346,8 +338,8 @@ class ClassifierPanel(wx.Panel):
             ok = 1
 
         if ok == 1:
-            #return
-            pass
+            return
+            #pass
 
         self.data_err.Hide()
         self.vec_err.Hide()
@@ -360,23 +352,16 @@ class ClassifierPanel(wx.Panel):
 
 
 
-        #LicentaBackend.haardetection.detect(self.data_path.GetValue(), self.vec_path.GetValue(),
-        #                                    self.background_path.GetValue(), self.pos.GetValue(),
-        #                                    self.neg.GetValue(), self.stage.GetValue(),
-        #                                    self.width.GetValue(), self.heigth.GetValue(),
-        #                                    printfct=panels['output_panel'].printLine)
-        #hard codded entry ca sa nu dau click, trebuie schimbat si mai sus la return pass
-
         global displayed_panel
         panels[displayed_panel].Hide()
         panels['output_panel'].Show()
         panels['output_panel'].GetParent().Layout()
         displayed_panel = 'output_panel'
 
-        LicentaBackend.haardetection.detect(r'C:\Users\Serban\Desktop\LicentaResources\output',
-                                            r'C:\Users\Serban\Desktop\LicentaResources\vecf.vec',
-                                            r'C:\Users\Serban\Desktop\LicentaResources\negative.txt',
-                                            '6', '100', '15', '0.999', '0.5',
+        LicentaBackend.haardetection.detect(self.data_path.GetValue(), self.vec_path.GetValue(),
+                                            self.background_path.GetValue(), self.pos.GetValue(),
+                                            self.neg.GetValue(), self.stage.GetValue(),
+                                            self.width.GetValue(), self.heigth.GetValue(),
                                             printfct=panels['output_panel'].printline)
 
 
@@ -521,8 +506,8 @@ class DetectionPanel(wx.Panel):
             ok = 1
 
         if ok == 1:
-            pass
-        #   return
+          #  pass
+           return
 
         LicentaBackend.detection.detect_faces(self.image_path.GetValue(), self.clas_path.GetValue(),
                                               self.name.GetValue(),self.scale.GetValue(),
@@ -693,8 +678,8 @@ class RecognitionPanel(wx.Panel):
             ok = 1
 
         if ok == 1:
-            pass
-            #return
+            #pass
+            return
 
         from LicentaBackend.recognition import recognize
 
@@ -876,8 +861,8 @@ class TrainCNNPanel(wx.Panel):
             ok = 1
 
         if ok == 1:
-            pass
-            #return
+            #pass
+            return
 
         global displayed_panel
         panels[displayed_panel].Hide()
@@ -1094,8 +1079,8 @@ class CreateSamplesPanel(wx.Panel):
             ok = 1
 
         if ok == 1:
-            #return
-            pass
+            return
+           # pass
 
         global displayed_panel
         panels[displayed_panel].Hide()

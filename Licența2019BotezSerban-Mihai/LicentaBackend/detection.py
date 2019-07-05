@@ -32,9 +32,6 @@ def detect_faces(image, classifier, name, scale_factor, min_neigh, min_size):
     cv2.waitKey(0)
 
 
-# detect_faces(r'C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00002.jpg',
-#             r'C:\Users\Serban\Desktop\LicentaResources\haarcascade_frontalcatface_extended.xml','cat' ,1.1, 10,
-#              '40, 40', prinfct=None)
 
 
 # la cats_00002.jpg gaseste un false negative daca pun 1.01 la scale factor

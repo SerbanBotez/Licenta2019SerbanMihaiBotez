@@ -17,4 +17,3 @@ def createbg(neg_path, location, name, printfunct=None):
             printfunct('Created the negative images paths file')
 
 
-#createbg(r'C:\Users\Serban\Desktop\LicentaResources\personneg', r'C:\Users\Serban\Desktop\LicentaResources', r'neg')

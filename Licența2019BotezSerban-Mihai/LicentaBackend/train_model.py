@@ -21,7 +21,6 @@ def create_mod(training, model_loc, binary, plot, epochs, train_test, batch_sz, 
     images = []
     labels = []
 
-    #data = r'C:\Users\Serban\Desktop\Licenta\keras-tutorial\animals'
     data = training
 
     Path = sorted(list(paths.list_images(data)))
@@ -68,7 +67,6 @@ def create_mod(training, model_loc, binary, plot, epochs, train_test, batch_sz, 
         print(classification_report(testY.argmax(axis=1),
                                     predictions.argmax(axis=1), target_names=lb.classes_))
 
-    # plot the training loss and accuracy
     N = np.arange(0, EPOCHS)
     plt.style.use("ggplot")
     plt.figure()
@@ -82,7 +80,6 @@ def create_mod(training, model_loc, binary, plot, epochs, train_test, batch_sz, 
     plt.legend()
     plt.savefig(plot)
 
-    # save the model and label binarizer to disk
     if printfct:
         printfct("[INFO] serializing network and label binarizer...")
     model.save(model_loc)

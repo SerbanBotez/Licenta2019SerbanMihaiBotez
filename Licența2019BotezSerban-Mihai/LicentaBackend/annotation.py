@@ -15,6 +15,3 @@ def annotate(images, output, name, height, refactor):
 
 
 
-
-#annotate(r'C:\Users\Serban\Desktop\LicentaResources\positivecats',
-#         r'C:\Users\Serban\Desktop\LicentaResources', 'annotations.txt', '20', '2')

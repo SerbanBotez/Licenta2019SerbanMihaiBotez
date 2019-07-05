@@ -12,15 +12,12 @@ def build_model(height, width, channels, classes):
 
     inputshape = (height, width, channels)
 
-#   last data format pentru tensorflow
-#   conv relu pool
     model.add(Conv2D(32, kernel_size=(3, 3), padding='valid', input_shape=inputshape, use_bias=False))
     model.add(Activation('relu'))
     model.add(BatchNormalization())
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
 
-#   conv relu pool *2
     model.add(Conv2D(64, (3, 3), padding="valid", use_bias=False))
     model.add(Activation('relu'))
     model.add(BatchNormalization())
@@ -29,8 +26,6 @@ def build_model(height, width, channels, classes):
     model.add(BatchNormalization())
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
-
-# conv relu pool *2
 
     model.add(Conv2D(128, (3, 3), padding="valid", use_bias=False))
     model.add(Activation("relu"))
