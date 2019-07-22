@@ -1,0 +1,13 @@
+C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00001.jpg 1 0 0 143 60
+C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00002.jpg 1 143 60 74 104
+C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00003.jpg 1 27 14 190 150
+C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00004.jpg 1 27 14 148 77
+C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00005.jpg 1 175 91 5 22
+C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00006.jpg 1 180 113 7 13
+C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00007.jpg 1 180 113 7 13
+C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00008.jpg 1 180 113 7 13
+C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00009.jpg 0
+C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00010.jpg 2 180 113 7 13 157 122 9 25
+C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00011.jpg 1 104 80 99 101
+C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00012.jpg 1 83 59 58 34
+C:\Users\Serban\Desktop\LicentaResources\positivecats\cats_00013.jpg 0

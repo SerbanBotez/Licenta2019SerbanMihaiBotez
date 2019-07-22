@@ -1,0 +1,6 @@
+positivecats\cats_00001.jpg 1 143 51 96 122
+positivecats\cats_00002.jpg 1 319 94 102 113
+positivecats\cats_00003.jpg 1 44 12 45 43
+positivecats\cats_00004.jpg 1 103 24 182 183
+positivecats\cats_00005.jpg 1 268 55 133 108
+positivecats\cats_00006.jpg 1 90 55 204 216
